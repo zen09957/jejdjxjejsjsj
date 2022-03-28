@@ -1,11 +1,4 @@
-local AnimationState = {
-    Idle = "Default",
-    Walk = "Default",
-    Run = "Default",
-    Jump = "Default",
-    Climb = "Default",
-    Fall = "Default",
-}
+
 
 local PuppywareSettings = {
     Aiming = {
