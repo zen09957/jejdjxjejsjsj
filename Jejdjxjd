@@ -1,4 +1,277 @@
+local AnimationState = {
+    Idle = "Default",
+    Walk = "Default",
+    Run = "Default",
+    Jump = "Default",
+    Climb = "Default",
+    Fall = "Default",
+}
 
+local PuppywareSettings = {
+    Aiming = {
+        Aimbot = {
+            Enabled = false,
+            AimAssist = false,
+            IsAiming = false,
+            ShowFOV = false,
+            FOVColor = Color3.new(0.603921, 0.011764, 1),
+            UseNearestDistance = false,
+            WallCheck = false,
+            KnockedOutCheck = false,
+            GrabbedCheck = false,
+            Hitboxes = {"Head"}
+        },
+        TriggerBot = {
+            Enabled = false,
+            Delay = false,
+            DelayAmount = 0
+        },
+        SilentAim = {
+            Enabled = false,
+            ShowFOV = false,
+            FOVColor = Color3.new(0.603921, 0.011764, 1),
+            WallCheck = false,
+            KnockedOutCheck = false,
+            UseNearestDistance = false,
+            GrabbedCheck = false,
+            Hitboxes = {"Head"}
+        },
+        TargetAim = {
+            Enabled = false,
+            ShowFOV = false,
+            FOVColor = Color3.new(0.603921, 0.011764, 1),
+            WallCheck = false,
+            KnockedOutCheck = false,
+            UseNearestDistance = false,
+            GrabbedCheck = false,
+            Hitboxes = {"Head"},
+            Target = nil
+        },
+        AimingSettings = {
+            MovementPrediction = false,
+            MovementPredictionAmount = 0.165 * 1,
+            HitChance = false,
+            HitChanceAmount = {
+                HitPercent = 100,
+                NotHitPercent = 0
+            },
+            AimAssistType = "Camera",
+            MovementPrediction = false,
+            MovementPredictionAmount = 0.165 * 1,
+            SmoothingTracing = false,
+            SmoothingTracingAmount = 5,
+            PingBasedPrediction = false,
+            GetVelocity = 0.165
+        },
+        TargetAimSettings = {
+            UnlockTargetKnocked = false,
+            NotificationAlert = false,
+        },
+        FOV = {
+            FOVFilled = false,
+            AimAssistSize = 100,
+            SilentAimSize = 100,
+            TargetAimSize = 100
+        },
+        Whitelist = {
+            Players = {},
+            Friends = {},
+            Holder = "",
+            Enabled = false,
+            CrewEnabled = false,
+            FriendsWhitelist = false
+        },
+    },
+    Blatant = {
+        BlatantAA = {
+            Enabled = false,
+            NoAutoRotate = false,
+            UndergroundWallbang = false,
+            Underground = false,
+            AntiAimType = "Jitter",
+            AntiAimSpeed = 100,
+            JitterAngle = 180
+        },
+        LegitAA = {
+            Enabled = false,
+            AntiAimAt = false,
+            AntiAimAtDistance = 20
+        },
+        FakeLag = {
+            Enabled = false,
+            TriggerAmount = 5
+        },
+        Movement = {
+            SpeedEnabled = false,
+            SpeedType = "Default",
+            SpeedRender = "Default",
+            SpeedAmount = 5
+        },
+        Reaching = {
+            FistReach = false,
+            MeleeReach = false
+        },
+        Character = {
+            AntiGrab = false,
+            AntiStomp = false,
+            AntiStompType = "Nil Char",
+            AntiBag = false,
+            AutoArmor = false,
+            AutoLettuce = false,
+            AutoReload = false
+        },
+        Farming = {
+            ATMFarm = false,
+            ShoeFarm = false,
+            MuscleFarm = false,
+            MuscleFarmingType = "Normal",
+            BoxFarm = false,
+            HospitalFarm = false,
+            ATMPick = false
+        },
+        Cash = {
+            AutoDrop = false,
+            AutoDropAmount = 5000,
+            AutoPickCash = false
+        }
+    },
+    Teleport = {
+        TeleportReturn = false,
+        ReturnDelay = false,
+        AutoPurchase = false,
+        AmmoPurchaseAmount = 1
+    }
+}
+
+local PuppywareModule = {
+    Old = {
+        CFrame,
+    },
+    God = {
+        MeleeAlive = false,
+        GodMelee = false,
+        GodBullet = false,
+        AntiRagdoll = false
+    },
+    LagTick = 0,
+    Ignores = {
+        "UpperTorso",
+        "LowerTorso",
+        "Head",
+        "LeftHand",
+        "LeftUpperArm",
+        "LeftLowerArm",
+        "RightHand",
+        "RightUpperArm",
+        "RightLowerArm"
+    },
+    PingBasedPrediction = 0.165,
+    Instance = {},
+    Teleport = {
+        Players = {},
+        Food = {
+            "Cranberry",
+            "Donut",
+            "Pizza",
+            "Chicken",
+            "Popcorn",
+            "Hamburger",
+            "Taco",
+            "Starblox Latte",
+            "Lettuce",
+            "Lemonade"
+        },
+        Location = {
+            "Bank",
+            "Boxing Place",
+            "Police Station",
+            "Admin Base",
+            "Sewers",
+            "Shoe Store",
+            "Hospital",
+            "Phone Store",
+            "Taco Shack",
+            "Casino",
+            "UFO",
+            "Fire Station",
+            "Church",
+            "Downhill Shop",
+            "Uphill Shop"
+        },
+        Gun = {
+            "Glock",
+            "SMG",
+            "Silencer",
+            "TacticalShotgun",
+            "P90",
+            "AUG",
+            "Shotgun",
+            "RPG",
+            "AR",
+            "Double-Barrel SG",
+            "Flamethrower",
+            "Revolver",
+            "LMG",
+            "AK47",
+            "DrumGun",
+            "Silencer",
+            "GrenadeLauncher",
+            "Taser",
+            "SilencerAR",
+            "Grenade"
+        },
+        Armor = {
+            "High-Medium Armor",
+            "Medium Armor"
+        },
+        Mask = {
+            "Surgeon Mask",
+            "Riot Mask",
+            "Pitchfork",
+            "Hockey Mask",
+            "Breathing Mask",
+            "Pumpkin Mask",
+            "Skull Mask",
+            "Paintball Mask",
+            "Ninja Mask"
+        },
+        Weight = {
+            "Weights",
+            "HeavyWeights"
+        },
+        Melee = {
+            "Shovel",
+            "Bat",
+            "Pencil",
+            "StopSign",
+            "Knife",
+            "Pitchfork"
+        },
+        Phone = {
+            "iPhone",
+            "iPhoneB",
+            "iPhoneG",
+            "iPhoneP",
+            "Old Phone",
+            "Orange Phone",
+            "Original Phone",
+        },
+        Bike = {
+            "DuoBike",
+            "Solo Bike",
+        },
+        Extra = {
+            "PepperSpray",
+            "LockPicker",
+            "Flashlight",
+            "Flowers",
+            "Money Gun",
+            "Brown Bag",
+            "Anti Bodies",
+            "Firework"
+        }
+    }
+}
 
 -- Init --
 
